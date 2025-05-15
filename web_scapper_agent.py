@@ -64,7 +64,7 @@ client = AOI(
 #         ]
 # narrative_chat_completion = client.chat.completions.create(messages=message_prompt,model=model_name)
 # print(narrative_chat_completion.choices[0].message.content)
-agent = Agent(
+web_scraper_agent = Agent(
     model=AOI(
         id=model_name,
         api_key=api_key,
@@ -79,7 +79,7 @@ agent = Agent(
     debug_mode=True
 )
  
-agent.print_response("https://www.investing.com/equities/kothari-products-ltd-ratios", debug=True)
+web_scraper_agent.print_response("https://www.investing.com/equities/kothari-products-ltd-ratios", debug=True)
  
  def safe_div(numerator, denominator):
     """Safely divide two numbers, return None if denominator is zero or None."""
@@ -113,9 +113,8 @@ def evaluate_loan_risk(company_name: str, loan_value: float, collateral_value: f
     # Keep only relevant columns
     df = df[[
         "Net Profit Margin %", "Return on Equity %", "Return on Assets %",
-        "Current Ratio", "Asset Turnover Ratio", "Debt Equity Ratio", "Debt To Asset Ratio",
-        "Interest Coverage Ratio", "Loan Value", "Collateral Value", "Credit Score",
-        "LtC"
+        "Current Ratio", "Asset Turnover Ratio", "Debt Equity Ratio", "Loan Value", 
+        "Collateral Value","Credit Score","LtC"
     ]]
     print("Relevant columns selected.")
  
@@ -133,11 +132,10 @@ def evaluate_loan_risk(company_name: str, loan_value: float, collateral_value: f
  
     # Apply weights to calculate scores
     dict_fin_weights = {
-        "Net Profit Margin %": 0.25, "Return on Equity %": 0.25, "Return on Assets %": 0.25,
-        "Current Ratio": 0.25, "Asset Turnover Ratio": 0.1, "Debt Equity Ratio": 0.1, "Debt To Asset Ratio": -0.2
+        "Net Profit Margin %": 0.25, "Return on Equity %": 0.25, "Return on Assets %": 0.15,
+        "Current Ratio": 0.15, "Asset Turnover Ratio": 0.1, "Debt Equity Ratio": 0.1, 
     }
-    dict_repay_weights = {
-        "Interest Coverage Ratio": 0.20, "Credit Score": 0.65, "LtC": 0.15
+    dict_repay_weights = { "Credit Score": 0.75, "LtC": 0.25
     }
  
     for col, weight in {**dict_fin_weights, **dict_repay_weights}.items():
